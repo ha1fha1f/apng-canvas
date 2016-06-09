@@ -83,6 +83,16 @@ var Animation = function () {
      */
     this.isFinished = function () { return finished; };
 
+    /**
+     * Add function called after finished animating.
+     * @param {()->()} method
+     * @return {animation}
+     */
+    this.onFinished = function(method) {
+        onFinishedMethod = method;
+        return this;
+    };
+
     // Private
 
     var ani = this,
@@ -91,7 +101,8 @@ var Animation = function () {
         prevF = null,
         played = false,
         finished = false,
-        contexts = [];
+        contexts = [],
+        onFinishedMethod = null;
 
     var tick = function (now) {
         while (played && nextRenderTime <= now) renderFrame(now);
@@ -130,6 +141,9 @@ var Animation = function () {
         } else {
             played = false;
             finished = true;
+            if (onFinishedMethod != null) {
+                onFinishedMethod();
+            }
         }
     };
 };
